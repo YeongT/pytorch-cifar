@@ -42,8 +42,13 @@ def init_params(net):
                 init.constant(m.bias, 0)
 
 
-_, term_width = os.popen('stty size', 'r').read().split()
-term_width = int(term_width)
+try:
+    _, term_width = os.popen('stty size', 'r').read().split()
+    term_width = int(term_width)
+except ValueError:
+    # Windows에서는 stty가 없으므로 shutil 사용
+    import shutil
+    term_width = shutil.get_terminal_size().columns
 
 TOTAL_BAR_LENGTH = 65.
 last_time = time.time()
