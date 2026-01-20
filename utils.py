@@ -6,8 +6,8 @@
 import os
 import sys
 import time
-import math
 
+import torch
 import torch.nn as nn
 import torch.nn.init as init
 
@@ -42,8 +42,16 @@ def init_params(net):
                 init.constant(m.bias, 0)
 
 
-_, term_width = os.popen('stty size', 'r').read().split()
-term_width = int(term_width)
+# Replace stty-based terminal detection with a cross-platform approach
+try:
+    import shutil
+    term_width = shutil.get_terminal_size().columns
+except Exception:
+    try:
+        term_width = os.get_terminal_size().columns
+    except Exception:
+        # Fallback to a reasonable default if terminal size cannot be determined
+        term_width = 80
 
 TOTAL_BAR_LENGTH = 65.
 last_time = time.time()
